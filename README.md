@@ -103,10 +103,9 @@ bash
 python -m backend.tools.build_kb
 
 Generates `backend/data/kb_index.npz` (untracked).
+```
 
 ---
-
-
 
 
 
