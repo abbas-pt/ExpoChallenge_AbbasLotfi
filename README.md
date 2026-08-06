@@ -73,7 +73,7 @@ Commands are transmitted over USB Serial at **9600 Baud** as newline-terminated 
 ### Sample `PICK` Payload
 When an item crosses the virtual trigger line, the dashboard emits:
 
-```json
+
 {
   "cmd": "PICK",
   "cls": "Plastic",
@@ -85,6 +85,7 @@ When an item crosses the virtual trigger line, the dashboard emits:
   "ttg_ms": 1248,
   "ts": 1730000000
 }
+
 
 
 Protocol Fields
