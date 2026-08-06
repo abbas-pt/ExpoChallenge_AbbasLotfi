@@ -129,7 +129,7 @@ BIN_CAPACITIES     = 10          # Units per category before conveyor auto-halt
 ## 🚀 Getting Started (Developer Setup)
 
 ### Prerequisites
-* Python 3.9+
+* Python 3.10+
 * OpenCV & PyTorch
 * Arduino connected via USB (Optional: App automatically falls back to offline mode)
 
