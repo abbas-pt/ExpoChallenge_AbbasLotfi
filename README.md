@@ -24,30 +24,26 @@ The system acts as the "brain and cockpit" of an automated waste sorting cell. I
 
 ---
 
-
 ## 🏗️ System Architecture
 
-
+```text
 [ Camera / Video Feed ]
-│
-▼
+          │
+          ▼
 [ Frame Pre-processing & Letterboxing (640x640) ]
-│
-▼
+          │
+          ▼
 [ YOLO11n Detection + ByteTrack Object Tracking ]
-│
-▼
+          │
+          ▼
 [ 18 ──► 5 Class Mapping & Trigger-Line Filter ]
-│
-▼
+          │
+          ▼
 [ Priority Queue & Kinematic Math (X, Y, Z, θ, TTG) ]
-│
-├─────────────────────────────────────────┐
-▼                                         ▼
+          │
+          ├─────────────────────────────────────────┐
+          ▼                                         ▼
 [ Serial JSON Link (Arduino / Robot Arm) ]   [ Gradio + PyWebview GUI (OEE, Bins, Logs) ]
-
-
-
 ---
 
 ## 🤖 AI Model & Training Configuration
@@ -73,7 +69,7 @@ Commands are transmitted over USB Serial at **9600 Baud** as newline-terminated 
 ### Sample `PICK` Payload
 When an item crosses the virtual trigger line, the dashboard emits:
 
-
+```json
 {
   "cmd": "PICK",
   "cls": "Plastic",
