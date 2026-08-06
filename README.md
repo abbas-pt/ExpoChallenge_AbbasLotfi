@@ -24,4 +24,22 @@ The system acts as the "brain and cockpit" of an automated waste sorting cell. I
 
 ---
 
+[ Camera / Video Feed ]
+│
+▼
+[ Frame Pre-processing & Letterboxing (640x640) ]
+│
+▼
+[ YOLO11n Detection + ByteTrack Object Tracking ]
+│
+▼
+[ 18 ──► 5 Class Mapping & Trigger-Line Filter ]
+│
+▼
+[ Priority Queue & Kinematic Math (X, Y, Z, θ, TTG) ]
+│
+├─────────────────────────────────────────┐
+▼                                         ▼
+[ Serial JSON Link (Arduino / Robot Arm) ]   [ Gradio + PyWebview GUI (OEE, Bins, Logs) ]
+
 ## 🏗️ System Architecture
