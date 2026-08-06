@@ -1,11 +1,3 @@
-# ExpoChallenge_AbbasLotfi
-# ♻️ ECO-SORT AI: Smart Waste Sorting Robot & Industrial Dashboard
-
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![YOLO11n](https://img.shields.io/badge/AI_Model-YOLO11n-green.svg)](https://github.com/ultralytics/ultralytics)
-[![GUI](https://img.shields.io/badge/UI-Gradio_%2B_PyWebview-orange.svg)](https://gradio.app/)
-[![Hardware](https://img.shields.io/badge/Hardware-Arduino_Serial_Bridge-red.svg)](https://www.arduino.cc/)
-[![Platform](https://img.shields.io/badge/Platform-Windows_%7C_macOS-lightgrey.svg)]()
 
 # ♻️ Smart Waste Robot
 
@@ -112,6 +104,7 @@ python -m backend.tools.build_kb
 
 Generates `backend/data/kb_index.npz` (untracked).
 
+---
 
 
 
@@ -121,16 +114,13 @@ Generates `backend/data/kb_index.npz` (untracked).
 
 
 
+# ♻️ ECO-SORT AI: Smart Waste Sorting Robot & Industrial Dashboard
 
-
-
-
-
-
-
-
-
-
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![YOLO11n](https://img.shields.io/badge/AI_Model-YOLO11n-green.svg)](https://github.com/ultralytics/ultralytics)
+[![GUI](https://img.shields.io/badge/UI-Gradio_%2B_PyWebview-orange.svg)](https://gradio.app/)
+[![Hardware](https://img.shields.io/badge/Hardware-Arduino_Serial_Bridge-red.svg)](https://www.arduino.cc/)
+[![Platform](https://img.shields.io/badge/Platform-Windows_%7C_macOS-lightgrey.svg)]()
 
 **ECO-SORT AI** is an industrial-grade vision, control, and monitoring dashboard developed for the **Smart Waste Sorting Robot** project (submitted to *Innoverse America*). 
 
@@ -295,11 +285,3 @@ BIN_CAPACITIES     = 10          # Units per category before conveyor auto-halt
 * **Out of Scope (Integration Target):** The physical 6-DOF/SCARA robotic arm hardware and its internal Inverse Kinematics motor firmware. The dashboard delivers precise JSON targets designed to be parsed by any downstream controller.
 
 ---
-
-## 👨‍💻 Team & Credits
-
-Developed for the **Innoverse America** competition:
-* **Sina Niknejadi**
-* **Reza Esmaeili**
-* **Ara Tajaddini**
-* **Abbas Lotfi**
