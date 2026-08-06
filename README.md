@@ -1,7 +1,7 @@
 # ExpoChallenge_AbbasLotfi
 # ♻️ ECO-SORT AI: Smart Waste Sorting Robot & Industrial Dashboard
 
-[![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![YOLO11n](https://img.shields.io/badge/AI_Model-YOLO11n-green.svg)](https://github.com/ultralytics/ultralytics)
 [![GUI](https://img.shields.io/badge/UI-Gradio_%2B_PyWebview-orange.svg)](https://gradio.app/)
 [![Hardware](https://img.shields.io/badge/Hardware-Arduino_Serial_Bridge-red.svg)](https://www.arduino.cc/)
