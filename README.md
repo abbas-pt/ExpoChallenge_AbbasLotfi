@@ -1,4 +1,3 @@
-# ExpoChallenge_AbbasLotfi
 # ♻️ ECO-SORT AI: Smart Waste Sorting Robot & Industrial Dashboard
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
