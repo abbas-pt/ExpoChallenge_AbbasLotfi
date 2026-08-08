@@ -1,106 +1,76 @@
-# ♻️ ECO-SORT AI: Smart Waste Sorting Robot & Industrial Dashboard
+# ♻️ Smart Waste Sorting Robot
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![YOLO11n](https://img.shields.io/badge/AI_Model-YOLO11n-green.svg)](https://github.com/ultralytics/ultralytics)
-[![GUI](https://img.shields.io/badge/UI-Gradio_%2B_PyWebview-orange.svg)](https://gradio.app/)
+[![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
+[![YOLO](https://img.shields.io/badge/AI_Model-YOLO11n-green.svg)](https://github.com/ultralytics/ultralytics)
+[![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
+[![GUI](https://img.shields.io/badge/Dashboard-Gradio_%2B_PyWebview-orange.svg)](https://gradio.app/)
 [![Hardware](https://img.shields.io/badge/Hardware-Arduino_Serial_Bridge-red.svg)](https://www.arduino.cc/)
-[![Platform](https://img.shields.io/badge/Platform-Windows_%7C_macOS-lightgrey.svg)]()
 
-**ECO-SORT AI** is an industrial-grade vision, control, and monitoring dashboard developed for the **Smart Waste Sorting Robot** project (submitted to *Innoverse America*). 
+**Vision-guided waste classification system combining AI detection, industrial control, and RAG-powered documentation.** The project delivers two deployment modes—an industrial dashboard for real-time robot control and a FastAPI backend for scalable API integration—both powered by custom-trained YOLO models.
 
-The system acts as the "brain and cockpit" of an automated waste sorting cell. It captures a camera feed, detects and tracks 18 distinct litter classes frame-by-frame, maps them into 5 operational categories, calculates kinematic parameters (X, Y, Z, Angle, Time-to-Grab), and transmits JSON commands over USB serial to an Arduino-based robot arm controller—all while calculating real-time industrial KPIs (**OEE**).
+Developed for **Innoverse Competition** by Reza Esmaeili Mood (Lead), Abbas (AI Training), Ara (Documentation), and Sina (Support).
 
 ---
 
-## 📸 Core Capabilities
+## 💡 Overview
 
-* **Real-time AI Vision & Tracking:** Custom-trained **YOLO11n** model integrated with **ByteTrack** for persistent multi-object tracking.
-* **18-to-5 Class Mapping:** Collapses 18 fine-grained TACO dataset classes into 5 action-oriented categories (*Metal, Plastic, Glass, Paper, Waste*) to drive distinct gripper forces and bin routing.
-* **Environmental Priority Queue:** Resolves conflicts when multiple objects cross the trigger line simultaneously by ranking recoverable economic/environmental value first (*Metal > Plastic > Glass > Paper > Waste*).
-* **Kinematics & Orientation Engine:** Computes real-world X/Y/Z offsets, object orientation angle ($\theta$) via Otsu-contour analysis, and remaining travel time (`ttg_ms`).
-* **Hardware Interlocks & Safety:** Dedicated E-Stop workflow, automatic conveyor halt on full bins, and graceful offline fallback if hardware is disconnected.
-* **OEE Dashboard & Benchmarking:** Real-time Overall Equipment Effectiveness calculation ($Availability \times Performance \times Quality$) and an offline mAP@50 validator.
+This project tackles automated waste sorting through computer vision and robotic control. At its core:
+
+- **AI Vision:** Custom-trained YOLO11n detects and tracks waste items across 18 fine-grained classes (TACO dataset), mapped to 5 operational categories for industrial routing
+- **Dual Architecture:** Industrial dashboard (ECO-SORT AI) for robot control + FastAPI backend for API-driven integration
+- **Hardware Bridge:** JSON-based serial protocol for Arduino-controlled robotic arms with kinematic calculations
+- **Smart Documentation:** RAG chatbot provides on-the-fly answers from 12 technical knowledge base documents
+- **OEE Monitoring:** Real-time industrial KPIs (Availability × Performance × Quality)
+
+**Stack:** Python 3.11 · FastAPI · Ultralytics YOLO · OpenCV (headless) · Gradio · PyWebview · SQLite · Serial Communication
 
 ---
 
 ## 🏗️ System Architecture
-
 ```text
-[ Camera / Video Feed ]
-          │
-          ▼
-[ Frame Pre-processing & Letterboxing (640x640) ]
-          │
-          ▼
-[ YOLO11n Detection + ByteTrack Object Tracking ]
-          │
-          ▼
-[ 18 ──► 5 Class Mapping & Trigger-Line Filter ]
-          │
-          ▼
-[ Priority Queue & Kinematic Math (X, Y, Z, θ, TTG) ]
-          │
-          ├─────────────────────────────────────────┐
-          ▼                                         ▼
-[ Serial JSON Link (Arduino / Robot Arm) ]   [ Gradio + PyWebview GUI (OEE, Bins, Logs) ]
-```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Camera Feed / Video Input                    │
+└────────────────────────────┬────────────────────────────────────┘
+│
+┌────────────┴────────────┐
+│                         │
+┌──────▼──────┐          ┌──────▼──────┐
+│  ECO-SORT AI │          │   FastAPI   │
+│  (Dashboard) │          │   Backend   │
+│              │          │             │
+│ • Gradio UI  │          │ • REST API  │
+│ • PyWebview  │          │ • Auth Keys │
+│ • OEE Metrics│          │ • RAG Chat  │
+│ • Real-time  │          │ • SQLite DB │
+└──────┬──────┘          └──────┬──────┘
+│                         │
+│                         │
+┌──────▼──────────────────────┬──┘
+│                             │
+┌────▼────┐                  ┌────▼─────┐
+│ Arduino │                  │ Clients  │
+│ Robot   │                  │ (API)    │
+│ Control │                  │          │
+└─────────┘                  └──────────┘
+
+**Core AI Pipeline (Shared):**
+text
+Frame Input → Letterbox (640x640) → YOLO11n Detection → ByteTrack Tracking
+→ 18-to-5 Class Mapping → Trigger-Line Filter → Priority Queue
+→ Kinematics Engine (X, Y, Z, θ, TTG) → Output (Serial JSON / API Response)
 
 ---
 
-## 🤖 AI Model & Training Configuration
+## 🤖 AI Model Configuration
 
-The perception system uses **YOLO11n (nano)** trained on the public **TACO (Trash Annotations in Context)** dataset.
+### YOLO11n Training (Google Colab)
+- **Dataset:** TACO (Trash Annotations in Context) — 18 litter classes
+- **Epochs:** 100 (Early stopping: 15) | **Image Size:** 640×640 | **Batch:** 16
+- **Augmentation:** Mosaic (1.0), MixUp (0.15), Copy-Paste (0.10), Rotation (±15°), Perspective (0.0005), HSV Jitter, Random Erasing (0.40)
 
-### Why YOLO11n?
-1. **Low Latency:** Crucial for fast-moving conveyor belts where detection must run within milliseconds.
-2. **CPU Deployment:** Allows the dashboard to run smoothly on standard laptops without requiring a dedicated CUDA GPU.
-3. **Small Footprint:** Keeps desktop installer sizes minimal and enables fast app startup.
+### 18-to-5 Class Mapping
 
-### Training Parameters (Google Colab Run)
-* **Epochs:** 100 (Early stopping patience: 15)
-* **Image Size:** 640x640 | **Batch Size:** 16
-* **Augmentation Pipeline:** Mosaic (1.0), MixUp (0.15), Copy-Paste (0.10), Rotation (+/- 15 deg), Perspective distortion (0.0005), HSV Jitter, and Random Erasing (0.40).
-
----
-
-## 🔌 Serial Communication Protocol (Arduino API)
-
-Commands are transmitted over USB Serial at **9600 Baud** as newline-terminated JSON payloads.
-
-### Sample `PICK` Payload
-When an item crosses the virtual trigger line, the dashboard emits:
-
-```json
-{
-  "cmd": "PICK",
-  "cls": "Plastic",
-  "x": -42.5,
-  "y": 187.3,
-  "z": -150.0,
-  "force": 50,
-  "theta": 12.4,
-  "ttg_ms": 1248,
-  "ts": 1730000000
-}
-```
-
-### Protocol Fields
-
-| Field | Type | Description |
-| :--- | :--- | :--- |
-| `cmd` | `String` | Command type (`PICK`, `STOP_CONVEYOR`, `START_CONVEYOR`, `EMERGENCY_STOP`) |
-| `cls` | `String` | Operational category (*Glass, Metal, Paper, Plastic, Waste*) |
-| `x`, `y`, `z` | `Float` | Target coordinates in millimeters relative to the arm's base |
-| `force` | `Int` | Gripper force in Newtons (e.g., Glass: 20N, Paper: 85N) |
-| `theta` | `Float` | Gripper orientation angle in degrees |
-| `ttg_ms` | `Int` | Time-to-Grab: delay in ms before object reaches pick point |
-| `ts` | `Int` | UNIX Timestamp of command generation |
-
----
-
-## 📊 18-to-5 Class Mapping Reference
-
-| Raw TACO Class (18) | Operational Category (5) | Priority | Grip Force |
+| TACO Classes (18) | Operational Category | Priority | Gripper Force |
 | :--- | :--- | :--- | :--- |
 | Aluminium foil, Can, Pop tab | **Metal** | 1 (Highest) | 70 N |
 | Bottle cap, Bottle, Lid, Other plastic, Plastic bag, Plastic container, Straw | **Plastic** | 2 | 50 N |
@@ -108,64 +78,128 @@ When an item crosses the virtual trigger line, the dashboard emits:
 | Carton, Cup, Paper | **Paper** | 4 | 85 N |
 | Cigarette, Other litter, Styrofoam piece, Unlabeled litter | **Waste** | 5 (Lowest) | 60 N |
 
----
-
-## ⚙️ Configuration & Calibration Variables
-
-Key physical constants live at the top of `app.py` for easy benchtop setup:
-
-```python
-TRIGGER_LINE_RATIO = 0.50        # Vertical trigger position (50% frame height)
-TRIGGER_TOLERANCE  = 25          # Acceptance band around trigger line (pixels)
-SCALE_FACTOR_MM    = 1.5         # Pixel-to-mm scaling factor
-CONVEYOR_SPEED_MM_S= 150.0       # Belt velocity (mm/s)
-GRASPING_ZONE_Y_MM = 600.0       # Distance from trigger line to physical gripper
-BIN_CAPACITIES     = 10          # Units per category before conveyor auto-halt
-```
+**Rationale:** Environmental priority queue resolves conflicts when multiple items cross the trigger line simultaneously (*Metal > Plastic > Glass > Paper > Waste*).
 
 ---
 
-## 🚀 Getting Started (Developer Setup)
+## 🌱 Documentation Index
+
+All documents live under [`backend/docs/kb/`](backend/docs/kb/).
+
+### 🧩 Core Architecture
+
+| # | 📄 Document | Description |
+|---|---|---|
+| 01 | [**Overview**](backend/docs/kb/01-overview.md) | Goals, components & high‑level diagram |
+| 02 | [**Classes**](backend/docs/kb/02-classes.md) | Specs for the five waste classes |
+| 03 | [**Pipeline**](backend/docs/kb/03-pipeline.md) | Data flow, inference & routing |
+| 04 | [**API**](backend/docs/kb/04-api.md) | REST endpoints, request / response formats |
+
+### ⚛️ AI & Models
+
+| # | 📄 Document | Description |
+|---|---|---|
+| 05 | [**Training**](backend/docs/kb/05-training.md) | Datasets, methodology & evaluation |
+| 10 | [**YOLO Versions**](backend/docs/kb/10-yolo-versions.md) | Version comparison & selection rationale |
+| 11 | [**Alternative Models**](backend/docs/kb/11-alternative-models.md) | Other CV/DL approaches examined |
+| 12 | [**Future Models**](backend/docs/kb/12-future-models.md) | Roadmap for research & optimisation |
+
+### 💬 Chatbot & Knowledge Base
+
+| # | 📄 Document | Description |
+|---|---|---|
+| 06 | [**RAG & Chat**](backend/docs/kb/06-rag-and-chat.md) | Architecture & generation pipeline |
+| 07 | [**FAQ**](backend/docs/kb/07-faq.md) | Common questions & troubleshooting tips |
+
+### 🛡️ Operations & Security
+
+| # | 📄 Document | Description |
+|---|---|---|
+| 08 | [**Failure Modes**](backend/docs/kb/08-failure-modes.md) | Known issues & recovery strategies |
+| 09 | [**Security & Keys**](backend/docs/kb/09-security-and-keys.md) | Auth workflow, API‑key handling |
+
+---
+
+## 🔌 Hardware Communication Protocol
+
+Commands transmit over USB Serial (**9600 Baud**) as newline-terminated JSON payloads.
+
+### Sample `PICK` Command
+json
+{
+  "cmd": "PICK",
+  "cls": "Plastic",
+  "x": -42.5,
+  "y": 187.3,
+  "z": -150.0,
+  "force": 50,
+  "theta": 12.4,
+  "ttg_ms": 1248,
+  "ts": 1730000000
+}
+### Protocol Fields
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `cmd` | `String` | Command type (`PICK`, `STOP_CONVEYOR`, `START_CONVEYOR`, `EMERGENCY_STOP`) |
+| `cls` | `String` | Operational category (*Glass, Metal, Paper, Plastic, Waste*) |
+| `x`, `y`, `z` | `Float` | Target coordinates (mm, relative to arm base) |
+| `force` | `Int` | Gripper force (Newtons) |
+| `theta` | `Float` | Gripper orientation angle (degrees) |
+| `ttg_ms` | `Int` | Time-to-Grab: delay before object reaches pick point (ms) |
+| `ts` | `Int` | UNIX timestamp of command generation |
+---
+
+## ⚙️ Calibration Parameters
+
+Physical constants for benchtop setup (top of `app.py`):
+
+python
+TRIGGER_LINE_RATIO = 0.50        # Vertical trigger position (50% frame height)
+TRIGGER_TOLERANCE  = 25          # Acceptance band around trigger line (pixels)
+SCALE_FACTOR_MM    = 1.5         # Pixel-to-mm scaling factor
+CONVEYOR_SPEED_MM_S= 150.0       # Belt velocity (mm/s)
+GRASPING_ZONE_Y_MM = 600.0       # Distance from trigger line to gripper
+BIN_CAPACITIES     = 10          # Units per category before auto-halt
+
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
-* Python 3.10+
-* OpenCV & PyTorch
-* Arduino connected via USB (Optional: App automatically falls back to offline mode)
+- Python 3.11+
+- Git
+- Arduino with USB connection (optional—app falls back to offline mode)
 
 ### Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/abbas-pt/ExpoChallenge_AbbasLotfi.git
-   cd ExpoChallenge_AbbasLotfi
-   ```
+bash
+git clone https://github.com/aratajaddini/smart-waste-robot.git
+cd smart-waste-robot
 
-2. Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   # On Windows:
-   venv\Scripts\activate
-   # On macOS/Linux:
-   source venv/bin/activate
-   ```
+### 1. Virtual Environment
 
-3. Install dependencies:
-   ```bash
-   pip install gradio ultralytics torch opencv-python numpy pandas pyserial pywebview pyyaml
-   ```
+bash
+python -m venv backend/.venv
 
-4. Place your model weights (`best_abbas.pt`) and dataset spec (`data.yaml`) in the project root.
+# Windows
+backend\.venv\Scripts\activate
 
-5. Run the application:
-   ```bash
-   python app.py
-   ```
+# Unix / macOS
+source backend/.venv/bin/activate
 
----
+### 2. Dependencies
 
-## 🛠️ Project Scope & Boundaries
+bash
+pip install -r backend/requirements.txt
 
-* **Implemented:** Full vision pipeline, YOLO11n model, ByteTrack tracking, 18-to-5 class mapping, kinematics engine, JSON serial protocol, Gradio/PyWebview dashboard, OEE metrics, E-Stop logic, and PyInstaller bundling.
-* **Out of Scope (Integration Target):** The physical 6-DOF/SCARA robotic arm hardware and its internal Inverse Kinematics motor firmware. The dashboard delivers precise JSON targets designed to be parsed by any downstream controller.
 
----
+### 3. Environment Configuration
+
+```bash
+# Windows
+copy backend\.env.example backend\.env
+
+# Unix / macOS
+cp backend/.env.example backend/.env
+
