@@ -386,8 +386,8 @@ Pre-built, ready-to-run installers for the dashboard are published under the rep
 | Platform | Package | Notes |
 |---|---|---|
 | 🪟 **Windows** | Standalone `.exe` installer | Double-click setup, works on any modern 64-bit Windows machine |
-| 🍎 **macOS (Apple Silicon)** | Native `.dmg` / `.app` build | For M-series Macs (M1/M2/M3/…) |
-| 🍎 **macOS (Intel)** | Native `.dmg` / `.app` build | For Intel-based Macs |
+| 🍎 **macOS (Apple Silicon)** | Native `.dmg` build | For M-series Macs (M1/M2/M3/…) |
+| 🍎 **macOS (Intel)** | Native `.dmg` build | For Intel-based Macs |
 
 > Make sure to download the **matching macOS build for your chip** (Apple Silicon vs. Intel) — the two are packaged separately for native performance.
 
