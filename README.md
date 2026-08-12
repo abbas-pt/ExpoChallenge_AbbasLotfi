@@ -118,7 +118,7 @@ smart-waste-robot/
 │   ├── src/Arduino.py           # Serial connection/reconnection + message transport
 │   ├── src/train.py              # Training entry point for the detection model
 │   ├── src/config.yaml            # Physical rig calibration (belt, gripper, bins, ports)
-│   ├── model-weights/best_abbas.pt            
+│   ├── model-weights/best_abbas.pt  # Model weights(best_abbas.pt)          
 │   └── docs/                   # 📄 Full PDF technical documentation for the dashboard
 └── .github/workflows/ci.yml   # Test + lint pipeline (pytest, ruff, mypy, bandit)
 ```
