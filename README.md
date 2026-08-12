@@ -404,7 +404,7 @@ Prefer to run from source instead of the installer? The dashboard is a separate 
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/aratajaddini/smart-waste-robot.git
+git clone https://github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood.git
 cd smart-waste-robot
 
 # 2. Create and activate a virtual environment
@@ -412,17 +412,17 @@ python -m venv dashboard\.venv
 dashboard\.venv\Scripts\activate
 
 # 3. Install dependencies
-pip install -r dashboard\requirements.txt
+pip install -r dashboard\src\requirements.txt
 
 # 4. Run
-python dashboard\app.py
+python dashboard\src\app.py
 ```
 
 ### macOS (Intel & Apple Silicon)
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/aratajaddini/smart-waste-robot.git
+git clone https://github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood.git
 cd smart-waste-robot
 
 # 2. Create and activate a virtual environment
@@ -430,10 +430,10 @@ python3 -m venv dashboard/.venv
 source dashboard/.venv/bin/activate
 
 # 3. Install dependencies
-pip install -r dashboard/requirements.txt
+pip install -r dashboard/src/requirements.txt
 
 # 4. Run
-python3 dashboard/app.py
+python3 dashboard/src/app.py
 ```
 
 > On Apple Silicon Macs, make sure you're using a native `arm64` Python build (not running under Rosetta) for the best inference performance. If a dependency doesn't ship an `arm64` wheel, running under Rosetta (`arch -x86_64 python3 -m venv ...`) is a valid fallback.
