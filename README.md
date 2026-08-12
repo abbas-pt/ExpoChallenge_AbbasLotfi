@@ -381,7 +381,7 @@ Download the file, launch the dashboard, switch the **Input Source** to **Video 
 
 ## Download & Install (Windows / macOS)
 
-Pre-built, ready-to-run installers for the dashboard are published under the repository's **[GitHub Releases](../../releases)** page — no Python environment required.
+Pre-built, ready-to-run installers for the dashboard are published under the repository's **[GitHub Releases](https://github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood/releases)** page — no Python environment required.
 
 | Platform | Package | Notes |
 |---|---|---|
