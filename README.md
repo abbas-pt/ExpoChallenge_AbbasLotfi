@@ -116,8 +116,8 @@ smart-waste-robot/
 │   ├── src/app.py              # Gradio + PyWebview application (detection loop, OEE, UI)
 │   ├── src/Arduino.py           # Serial connection/reconnection + message transport
 │   ├── src/train.py              # Training entry point for the detection model
-│   ├── src/config.yaml
-│   ├── model-weights/best_abbas.pt            # Physical rig calibration (belt, gripper, bins, ports)
+│   ├── src/config.yaml            # Physical rig calibration (belt, gripper, bins, ports)
+│   ├── model-weights/best_abbas.pt            
 │   └── docs/                   # 📄 Full PDF technical documentation for the dashboard
 └── .github/workflows/ci.yml   # Test + lint pipeline (pytest, ruff, mypy, bandit)
 ```
