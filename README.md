@@ -113,6 +113,7 @@ smart-waste-robot/
 │   ├── script.js           # API-key handling, /predict & /chat integration
 │   └── style.css            # Site styling
 ├── dashboard/            # PART B — Trace Sort AI: real-time detection + robot control app
+│   ├── src/assets/             # dashboard background animation file
 │   ├── src/app.py              # Gradio + PyWebview application (detection loop, OEE, UI)
 │   ├── src/Arduino.py           # Serial connection/reconnection + message transport
 │   ├── src/train.py              # Training entry point for the detection model
