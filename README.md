@@ -85,7 +85,7 @@ Frame Input → Letterbox (640×640) → YOLO11n Detection → ByteTrack Trackin
 
 **2. Backend API pipeline (Part A) — single-shot classification:**
 ```text
-Uploaded Image / Video (from TraceSort website or any client) → YOLO11n Classification Head
+Uploaded Image / Video (from TraceSort website or any client) → YOLO8n Classification Head
 → Top-1 Category + Confidence → JSON API Response
 ```
 
