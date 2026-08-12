@@ -113,10 +113,11 @@ smart-waste-robot/
 │   ├── script.js           # API-key handling, /predict & /chat integration
 │   └── style.css            # Site styling
 ├── dashboard/            # PART B — Trace Sort AI: real-time detection + robot control app
-│   ├── app.py              # Gradio + PyWebview application (detection loop, OEE, UI)
-│   ├── Arduino.py           # Serial connection/reconnection + message transport
-│   ├── train.py              # Training entry point for the detection model
-│   ├── config.yaml            # Physical rig calibration (belt, gripper, bins, ports)
+│   ├── src/app.py              # Gradio + PyWebview application (detection loop, OEE, UI)
+│   ├── src/Arduino.py           # Serial connection/reconnection + message transport
+│   ├── src/train.py              # Training entry point for the detection model
+│   ├── src/config.yaml
+│   ├── model-weights/best_abbas.pt            # Physical rig calibration (belt, gripper, bins, ports)
 │   └── docs/                   # 📄 Full PDF technical documentation for the dashboard
 └── .github/workflows/ci.yml   # Test + lint pipeline (pytest, ruff, mypy, bandit)
 ```
