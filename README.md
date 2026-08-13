@@ -5,9 +5,9 @@
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
 [![GUI](https://img.shields.io/badge/Dashboard-Gradio_%2B_PyWebview-orange.svg)](https://gradio.app/)
 [![Hardware](https://img.shields.io/badge/Hardware-Arduino_Serial_Bridge-red.svg)](https://www.arduino.cc/)
-[![License](https://img.shields.io/badge/License-See_LICENSE-lightgrey.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-lightgrey.svg)](LICENSE)
 
-**An end-to-end, vision-guided waste classification platform** combining a real-time AI sorting rig, a public-facing web app, a REST API with a local documentation assistant, and an industrial robotic control dashboard.
+**An end-to-end, vision-guided waste classification platform** combining a public-facing web app with a classification API, and a standalone real-time industrial dashboard with robotic-arm control.
 
 Developed for the **Innoverse Competition** by Reza Esmaeili Mood (Lead), Abbas Lotfi (AI Training), Ara Tajaddini (Documentation), and Sina Niknejad (Support).
 
@@ -18,37 +18,49 @@ Developed for the **Innoverse Competition** by Reza Esmaeili Mood (Lead), Abbas 
 1. [Overview](#-overview)
 2. [System Architecture](#-system-architecture)
 3. [Repository Layout](#-repository-layout)
-4. [Shared AI Foundation](#-shared-ai-foundation)
-5. [Part A — Frontend & Backend (Classification Web Service)](#-part-a--frontend--backend-classification-web-service)
+4. [Clone the Repository](#-clone-the-repository)
+5. [Part 1 — Web Platform (Backend API & Frontend)](#-part-1--web-platform-backend-api--frontend)
+   - [AI Classification Model](#ai-classification-model)
    - [Backend API](#backend-api)
    - [Frontend — TraceSort Website](#frontend--tracesort-website)
-   - [Getting Started (Backend + Frontend)](#getting-started-backend--frontend)
-6. [Part B — Dashboard (Real-Time Detection & Robotic Control)](#-part-b--dashboard-real-time-detection--robotic-control)
-   - [Overview & Features](#overview--features)
+   - [Running the Web Platform](#running-the-web-platform)
+6. [Part 2 — TRACE-SORT AI Dashboard (Real-Time Detection & Robotics)](#-part-2--trace-sort-ai-dashboard-real-time-detection--robotics)
+   - [AI Detection Model & Vision Pipeline](#ai-detection-model--vision-pipeline)
+   - [Dashboard Features](#dashboard-features)
    - [Hardware Communication Protocol](#hardware-communication-protocol)
    - [Calibration Parameters](#calibration-parameters)
    - [Full Documentation (PDF)](#full-documentation-pdf)
-   - [Test the Dashboard](#test-the-dashboard)
-   - [Download & Install (Windows / macOS)](#download--install-windows--macos)
+   - [Downloads — Installers (Windows & macOS)](#downloads--installers-windows--macos)
+   - [Test the Dashboard (Sample Video)](#test-the-dashboard-sample-video)
    - [Running the Dashboard from Source](#running-the-dashboard-from-source)
-7. [Testing & CI](#-testing--ci)
-8. [Documentation Index](#-documentation-index)
-9. [Roadmap & Future Vision](#-roadmap--future-vision)
-10. [Contact & Team](#-contact--team)
-11. [License](#-license)
+7. [18-to-5 Operational Class Mapping](#-18-to-5-operational-class-mapping)
+8. [Testing & CI](#-testing--ci)
+9. [Documentation Index (Chat Knowledge Base)](#-documentation-index-chat-knowledge-base)
+10. [Roadmap & Future Vision](#-roadmap--future-vision)
+11. [Contact & Team](#-contact--team)
+12. [License](#-license)
 
 ---
 
 ## 💡 Overview
 
-**Trace Sort AI** tackles automated waste sorting through computer vision and robotic control, delivered as **two coordinated applications** that share a common waste taxonomy and training lineage, but serve two very different purposes:
+**Trace Sort AI** tackles automated waste sorting through computer vision and robotic control, delivered as **two independent applications** that share a common waste taxonomy and training lineage, but ship, run, and are consumed completely separately:
 
-| Application | Purpose | Stack |
-|---|---|---|
-| **🌐 Frontend + Backend** (classification web service) | A public-facing website and REST API where users upload a single image or video and get back the dominant waste category | FastAPI, Ultralytics YOLO, SQLite, HTML5/CSS3/JS |
-| **🖥️ Dashboard — Trace Sort AI** (industrial rig) | A native, real-time desktop application that runs on the physical sorting rig: detects and tracks every object on the conveyor belt and drives a robotic arm via serial commands | Python, Ultralytics YOLO, OpenCV, Gradio, PyWebview, PySerial |
+| Part | Application | Purpose | Stack |
+|---|---|---|---|
+| **1** | **Web Platform** (Backend API + TraceSort Frontend) | Public-facing site and a stateless REST API that classifies a single uploaded image/video, plus a local documentation assistant | FastAPI, Ultralytics YOLO, SQLite, vanilla JS/HTML/CSS |
+| **2** | **TRACE-SORT AI Dashboard** | Real-time detection, tracking, kinematics, and robotic-arm control for a physical sorting rig | Python, Ultralytics YOLO, OpenCV, Gradio, PyWebview, PySerial |
 
-These two applications **do not share a runtime** — they share a waste taxonomy and a common training lineage only. The rest of this README is split into **Part A** (Frontend & Backend) and **Part B** (Dashboard) so each can be read, run, and deployed independently.
+These two parts **do not share a runtime** — the dashboard never talks to the backend API, and the backend never talks to serial hardware. They are documented separately below (**Part 1** and **Part 2**) so each can be read, run, and deployed independently.
+
+**Core capabilities at a glance:**
+
+- **AI Vision (Web Platform):** A YOLO11n classification head returns the top waste category for a single uploaded image or video via the `/predict` endpoint.
+- **AI Vision (Dashboard):** A custom-trained YOLO11n detection model detects and tracks waste items live on a conveyor belt across 18 fine-grained classes (TACO dataset), mapped to 5 operational categories for routing.
+- **Hardware Bridge (Dashboard only):** A JSON-based serial protocol drives an Arduino-controlled robotic arm, complete with 2D kinematics (position, angle, time-to-grab) computed per detected object.
+- **Local Documentation Assistant (Web Platform only):** A retrieval-based (hybrid BM25 + sentence-embedding) search over the project's technical knowledge base, returning cited, extractive answers via the `/chat` endpoint.
+- **OEE Monitoring (Dashboard only):** Real-time industrial KPIs (Availability × Performance × Quality) surfaced live on the dashboard.
+- **Web Client:** A polished landing page and interactive demo (TraceSort) that authenticates against the API and drives `/predict` and `/chat` directly from the browser.
 
 ---
 
@@ -59,23 +71,26 @@ These two applications **do not share a runtime** — they share a waste taxonom
                                │
                ┌───────────────┴───────────────┐
                │                               │
-       ┌───────▼───────┐               ┌───────▼───────┐
-       │ Trace Sort AI │               │    FastAPI    │
-       │  (Dashboard)  │               │    Backend    │
-       │               │               │               │
-       │ • Gradio UI   │               │ • REST API    │
-       │ • PyWebview   │               │ • Auth Keys   │
-       │ • OEE Metrics │               │ • Local KB    │
-       │ • Real-time   │               │   search      │
-       └───────┬───────┘               └───────┬───────┘
+       ┌───────▼────────┐              ┌───────▼───────┐
+       │  TRACE-SORT AI  │              │    FastAPI    │
+       │   (Dashboard)   │              │    Backend    │
+       │   — Part 2 —    │              │   — Part 1 —  │
+       │                 │              │               │
+       │ • Gradio UI     │              │ • REST API    │
+       │ • PyWebview     │              │ • Auth Keys   │
+       │ • OEE Metrics   │              │ • Local KB    │
+       │ • Real-time     │              │   search      │
+       └───────┬─────────┘              └───────┬───────┘
                │                                 │
-       ┌───────▼────────┐               ┌────────▼────────┐
-       │    Arduino     │               │   TraceSort     │
-       │  Robot Control │               │  Web Frontend   │
-       └────────────────┘               └─────────────────┘
+       ┌───────▼────────┐              ┌────────▼────────┐
+       │    Arduino     │              │   TraceSort     │
+       │  Robot Control │              │  Web Frontend   │
+       └────────────────┘              └─────────────────┘
 ```
 
-**1. Dashboard pipeline (Part B) — real-time detection + control:**
+The dashboard and the backend run **two independent AI pipelines** — they share a waste taxonomy and training lineage, not a runtime.
+
+**Part 2 — Dashboard pipeline (`dashboard/app.py`) — real-time detection + control:**
 ```text
 Frame Input → Letterbox (640×640) → YOLO11n Detection → ByteTrack Tracking
 → 18-to-5 Class Mapping → Trigger-Line Filter → Priority Queue
@@ -83,82 +98,73 @@ Frame Input → Letterbox (640×640) → YOLO11n Detection → ByteTrack Trackin
 → Serial JSON → Arduino
 ```
 
-**2. Backend API pipeline (Part A) — single-shot classification:**
+**Part 1 — Backend API pipeline (`backend/inference.py`) — single-shot classification:**
 ```text
-Uploaded Image / Video (from TraceSort website or any client) → YOLO8n Classification Head
+Uploaded Image / Video (from TraceSort or any client) → YOLO11n Classification Head
 → Top-1 Category + Confidence → JSON API Response
 ```
 
-The API pipeline answers *"what is the dominant class in this image?"*, not *"where is each object and when should it be picked?"*. Integrations that need per-object coordinates should consume the dashboard's serial protocol, not `/predict`.
+The API pipeline answers *"what is the dominant class in this image?"*, not *"where is each object and when should it be picked?"*. Integrations that need per-object coordinates should consume the dashboard's serial protocol (Part 2), not `/predict`.
 
 ---
 
 ## 🗂️ Repository Layout
 
 ```text
-smart-waste-robot/
-├── backend/            # PART A — FastAPI service: prediction API, auth, RAG chat, admin
-│   ├── chat/           # Hybrid retriever (BM25 + embeddings) + small-talk handling
-│   ├── routers/        # /predict, /auth, /history, /feedback, /admin/keys
-│   ├── models/         # SQLite schema/access layer
-│   ├── schemas/        # Pydantic request/response models
-│   ├── tools/          # CLI utilities: build_kb, mint_key, calibrate_kb, etc.
-│   ├── docs/kb/         # 12 knowledge-base documents indexed by /chat
-│   ├── tests/           # Pytest suite (auth, CORS, predict, chat, small talk)
-│   ├── config.py         # Centralized, env-driven configuration with fail-fast checks
-│   ├── security.py       # API-key auth dependencies
-│   └── inference.py      # YOLO classification logic (model-agnostic of FastAPI)
-├── frontend/            # PART A — TraceSort marketing site + live demo client
-│   ├── index.html         # Landing page, live demo, chat widget markup
-│   ├── script.js           # API-key handling, /predict & /chat integration
-│   └── style.css            # Site styling
-├── dashboard/            # PART B — Trace Sort AI: real-time detection + robot control app
-│   ├── src/assets/             # dashboard background animation file
-│   ├── src/app.py              # Gradio + PyWebview application (detection loop, OEE, UI)
-│   ├── src/Arduino.py           # Serial connection/reconnection + message transport
-│   ├── src/train.py              # Training entry point for the detection model
-│   ├── src/config.yaml            # Physical rig calibration (belt, gripper, bins, ports)
-│   ├── model-weights/best_abbas.pt  # Model weights(best_abbas.pt)          
+ExpoChallenge-RezaEsmaeiliMood/
+├── backend/             # PART 1 — FastAPI service: prediction API, auth, RAG chat, admin
+│   ├── chat/             # Hybrid retriever (BM25 + embeddings) + small-talk handling
+│   ├── routers/          # /predict, /auth, /history, /feedback, /admin/keys
+│   ├── models/           # SQLite schema/access layer
+│   ├── schemas/          # Pydantic request/response models
+│   ├── tools/            # CLI utilities: build_kb, mint_key, calibrate_kb, etc.
+│   ├── docs/kb/           # 12 knowledge-base documents indexed by /chat
+│   ├── tests/             # Pytest suite (auth, CORS, predict, chat, small talk)
+│   ├── config.py           # Centralized, env-driven configuration with fail-fast checks
+│   ├── security.py         # API-key auth dependencies
+│   └── inference.py        # YOLO classification logic (model-agnostic of FastAPI)
+├── frontend/             # PART 1 — TraceSort marketing site + live demo client
+│   ├── index.html          # Landing page, live demo, chat widget markup
+│   ├── script.js            # API-key handling, /predict & /chat integration
+│   └── style.css             # Site styling
+├── dashboard/            # PART 2 — TRACE-SORT AI: real-time detection + robot control app
+│   ├── app.py              # Gradio + PyWebview application (detection loop, OEE, UI)
+│   ├── Arduino.py           # Serial connection/reconnection + message transport
+│   ├── train.py              # Training entry point for the detection model
+│   ├── config.yaml            # Physical rig calibration (belt, gripper, bins, ports)
 │   └── docs/                   # 📄 Full PDF technical documentation for the dashboard
-└── .github/workflows/ci.yml   # Test + lint pipeline (pytest, ruff, mypy, bandit)
+├── .github/workflows/ci.yml   # Test + lint pipeline (pytest, ruff, mypy, bandit)
+├── pyproject.toml         # Shared project metadata + pytest/ruff/mypy configuration
+├── LICENSE                # MIT License
+└── README.md
 ```
 
 ---
 
-## 🤖 Shared AI Foundation
+## 📥 Clone the Repository
 
-Both applications are trained from the same lineage and share the same waste taxonomy, but run **two separate model heads for two separate jobs**:
+Both Part 1 and Part 2 live in the same repository — clone it once, then follow whichever part(s) you need below.
 
-- The **dashboard** (Part B) runs a **detection** model — bounding boxes, persistent tracking, and per-object coordinates.
-- The **backend API** (Part A) runs a **classification** model — a single top-class label per image/video.
+```bash
+git clone https://github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood.git
+cd ExpoChallenge-RezaEsmaeiliMood
+```
 
-They are **not interchangeable**, even though both trace back to the same training pipeline.
+---
 
-### Model & Training
+# 🌐 Part 1 — Web Platform (Backend API & Frontend)
+
+This part is the public-facing side of Trace Sort AI: a stateless classification API plus the TraceSort website that consumes it. It has **no dependency on Arduino, serial ports, or physical hardware** — it can be deployed to any standard web host.
+
+## AI Classification Model
+
 - **Base model:** YOLO11n, trained on Google Colab.
 - **Dataset:** TACO (Trash Annotations in Context) — 18 fine-grained litter classes.
 - **Training config:** 100 epochs (early stopping at 15), 640×640 image size, batch size 16.
 - **Augmentation:** Mosaic (1.0), MixUp (0.15), Copy-Paste (0.10), Rotation (±15°), Perspective (0.0005), HSV jitter, Random Erasing (0.40).
+- **Job:** a *classification* model — it returns a single top-class label and confidence score for an uploaded image or video, with **no bounding boxes, tracking, or queueing logic**.
 
-> Trained weights (`.pt`) are intentionally not committed to this repository (binary size). To reproduce or verify mAP@50 / precision / recall, run the dashboard's built-in benchmark tool or `model.val()` from `backend/tools/` against your own copy of the weights.
-
-### 18-to-5 Operational Class Mapping
-
-| TACO Classes (18) | Operational Category | Priority | Gripper Force |
-|:------------------|:---------------------|:---------|:--------------|
-| Aluminium foil, Can, Pop tab | **Metal** | 1 (Highest) | 70 N |
-| Bottle cap, Bottle, Lid, Other plastic, Plastic bag, Plastic container, Straw | **Plastic** | 2 | 50 N |
-| Broken glass | **Glass** | 3 | 20 N |
-| Carton, Cup, Paper | **Paper** | 4 | 85 N |
-| Cigarette, Other litter, Styrofoam piece, Unlabeled litter | **Waste** | 5 (Lowest) | 60 N |
-
-**Rationale:** the dashboard's priority queue resolves conflicts when multiple items cross the trigger line simultaneously (*Metal > Plastic > Glass > Paper > Waste*). This priority order applies to the dashboard only — the backend API returns a single classification with no queueing logic.
-
----
-
-# 🌐 Part A — Frontend & Backend (Classification Web Service)
-
-This part is the public-facing side of **Trace Sort AI**: a website where anyone can upload an image or video and instantly see it classified into one of the five waste categories, backed by a REST API.
+> This is trained from the same lineage as the dashboard's detection model (same taxonomy, same dataset family) but is a **separate model head serving a separate purpose** — the two are not interchangeable. Trained weights (`.pt`) are intentionally not committed to this repository (binary size). To reproduce or verify accuracy, run `model.val()` from `backend/tools/` against your own copy of the weights.
 
 ## Backend API
 
@@ -177,9 +183,6 @@ FastAPI service exposing prediction, authentication, history, feedback, admin, a
 | `/chat` | `POST` | Ask a question against the local documentation knowledge base |
 | `/health` | `GET` | Liveness probe |
 
-### Local Documentation Assistant (`/chat`)
-A hybrid BM25 + sentence-embedding retrieval system with Reciprocal Rank Fusion over 12 knowledge-base documents, gated by a minimum cosine-similarity threshold before answering — it returns cited, extractive excerpts rather than free-form generated text.
-
 ### Security model
 - Every protected route requires an `X-API-Key` header.
 - The **admin key** (from `.env`) is compared with `secrets.compare_digest` to avoid timing attacks.
@@ -192,6 +195,9 @@ A hybrid BM25 + sentence-embedding retrieval system with Reciprocal Rank Fusion 
 - Destination filenames are randomly generated (`uuid4`), not derived from client input.
 - Temporary files are always cleaned up, including on error paths.
 
+### Local Documentation Assistant
+The `/chat` endpoint runs hybrid BM25 + sentence-embedding retrieval with Reciprocal Rank Fusion over 12 knowledge-base documents (see the [Documentation Index](#-documentation-index-chat-knowledge-base)), gated by a minimum cosine-similarity threshold before answering. It returns **cited, extractive excerpts**, not free-form generated text.
+
 ## Frontend — TraceSort Website
 
 `frontend/` is a self-contained static site (no build step, no framework) that serves as both the project's public landing page and a live client for the Backend API.
@@ -202,17 +208,11 @@ A hybrid BM25 + sentence-embedding retrieval system with Reciprocal Rank Fusion 
 - **API-key handling:** keys are kept in `sessionStorage` (tab-scoped, cleared on tab close) rather than `localStorage`, with an explicit in-code warning that this pattern is appropriate for a demo, not for a production multi-tenant deployment.
 - **Configurable API base:** `window.__API_BASE__` lets the same static site point at a different backend host without a rebuild.
 
-## Getting Started (Backend + Frontend)
+## Running the Web Platform
 
 ### Prerequisites
-- Python 3.11+
+- Python 3.11+ (< 3.13)
 - Git
-
-### Clone
-```bash
-git clone https://github.com/aratajaddini/smart-waste-robot.git
-cd smart-waste-robot
-```
 
 ### 1. Virtual environment
 ```bash
@@ -271,15 +271,28 @@ python -m backend.tools.mint_key issue --label "demo shift" --hours 8
 pytest backend/tests/ -q
 ```
 
-This setup runs identically on **Windows, macOS, and Linux** — the only difference is the virtual-environment activation command shown above.
+> These steps work identically on **Windows, macOS, and Linux** — only the virtual-environment activation command differs (shown above for both).
 
 ---
 
-# 🖥️ Part B — Dashboard (Real-Time Detection & Robotic Control)
+# 🤖 Part 2 — TRACE-SORT AI Dashboard (Real-Time Detection & Robotics)
 
-`dashboard/` is the operator-facing application for the physical sorting rig: a native desktop window (via PyWebview) hosting a Gradio UI, running a real-time YOLO11n **detection** model and driving a robotic arm over serial.
+This part is the operator-facing, physical-rig side of Trace Sort AI: a native desktop application that runs live object detection on a conveyor belt and drives a robotic arm over serial. It is fully independent from Part 1 — it never calls the backend API and has no web server component.
 
-## Overview & Features
+## AI Detection Model & Vision Pipeline
+
+- **Base model:** YOLO11n, trained on Google Colab, same TACO-derived lineage as the classification model in Part 1, but trained and deployed as a **detection** model (bounding boxes + persistent tracking IDs), not a single-label classifier.
+- **Training config:** 100 epochs (early stopping at 15), 640×640 image size, batch size 16, with the same augmentation recipe described in Part 1 (Mosaic, MixUp, Copy-Paste, rotation, perspective, HSV jitter, random erasing).
+- **Tracking:** ByteTrack assigns persistent IDs to detected objects across frames, with a garbage-collection routine (`cleanup_tracking_memory`) that expires stale track IDs after 30 seconds.
+- **Trigger-line filtering:** objects are only actioned once their tracked center crosses a configurable horizontal line (`trigger_line_ratio`), within a pixel tolerance band.
+- **Orientation estimation:** `extract_object_orientation()` isolates the object's contour (Otsu threshold, falling back to Canny edges when needed) and fits a minimum-area rectangle to estimate rotation angle — with explicit handling for OpenCV's legacy vs. modern `minAreaRect` angle conventions.
+- **Kinematics engine:** converts pixel-space object position into real-world millimeter coordinates (X, Y), computes remaining distance to the gripper, time-to-grab (based on belt speed), and packages the result with class, force, and angle into a single JSON payload for the Arduino.
+
+> Trained weights (`.pt`) are intentionally not committed to this repository (binary size). To reproduce or verify mAP@50 / precision / recall, use the dashboard's built-in benchmark tool.
+
+## Dashboard Features
+
+`dashboard/app.py` is the operator-facing application: a native desktop window (via PyWebview) hosting a Gradio UI, built for a live physical sorting rig.
 
 - Live camera or uploaded-video inference with on-frame overlays.
 - Real-time OEE metrics: **Availability × Performance × Quality**, computed from planned production time, ideal cycle time, and accumulated downtime.
@@ -290,17 +303,11 @@ This setup runs identically on **Windows, macOS, and Linux** — the only differ
 - Built-in benchmark tool to validate model accuracy (mAP/precision/recall) against a held-out validation set.
 - Revenue estimation per category using a configurable dollar-value table, feeding the dashboard's financial KPIs.
 
-### Vision Pipeline Details
-- **Tracking:** ByteTrack assigns persistent IDs to detected objects across frames, with a garbage-collection routine (`cleanup_tracking_memory`) that expires stale track IDs after 30 seconds.
-- **Trigger-line filtering:** objects are only actioned once their tracked center crosses a configurable horizontal line (`trigger_line_ratio`), within a pixel tolerance band.
-- **Orientation estimation:** `extract_object_orientation()` isolates the object's contour (Otsu threshold, falling back to Canny edges when needed) and fits a minimum-area rectangle to estimate rotation angle — with explicit handling for OpenCV's legacy vs. modern `minAreaRect` angle conventions.
-- **Kinematics engine:** converts pixel-space object position into real-world millimeter coordinates (X, Y), computes remaining distance to the gripper, time-to-grab (based on belt speed), and packages the result with class, force, and angle into a single JSON payload for the Arduino.
-
 **Configuration:** all physical constants (conveyor speed, trigger line, gripper forces, bin capacities, serial port/baud rate, planned production time, ideal cycle time) live in `dashboard/config.yaml` and are loaded at startup — no hard-coded rig parameters in the application code.
 
 ## Hardware Communication Protocol
 
-Commands transmit over USB Serial (**9600 Baud**) as newline-terminated JSON payloads. This protocol is emitted by `dashboard/app.py` / `dashboard/Arduino.py` — the FastAPI backend (Part A) never talks to serial hardware.
+Commands transmit over USB Serial (**9600 Baud**) as newline-terminated JSON payloads. This protocol is emitted by `dashboard/app.py` / `dashboard/Arduino.py` — **the FastAPI backend from Part 1 never talks to serial hardware.**
 
 ### Sample `PICK` Command
 ```json
@@ -337,15 +344,15 @@ hardware:
   default_port: "COM3"
   baudrate: 9600
 
+conveyor:
+  speed_mm_s: 150.0
+  direction: "DOWNWARD"
+  grasping_zone_y_mm: 600.0
+
 vision:
   trigger_line_ratio: 0.50     # Vertical trigger position (50% of frame height)
   trigger_tolerance_px: 25     # Acceptance band around the trigger line (pixels)
   scale_factor_mm: 1.5         # Pixel-to-mm scaling factor
-
-conveyor:
-  speed_mm_s: 150.0            # Belt velocity (mm/s)
-  grasping_zone_y_mm: 600.0    # Distance from trigger line to gripper
-  direction: "DOWNWARD"
 
 bin_capacities: 10             # Units per category before auto-halt
 
@@ -361,92 +368,113 @@ IDEAL_CYCLE_TIME: 3.0            # seconds, for OEE Performance
 zm: -150.0                       # fixed Z height (mm)
 ```
 
-These are **benchtop test values**, not safety-rated production constants — recalibrate every value in `dashboard/config.yaml` against your physical rig before deployment.
+> These are **benchtop test values**, not safety-rated production constants — recalibrate every value in `dashboard/config.yaml` against your physical rig before deployment.
 
 ## Full Documentation (PDF)
 
-A complete, in-depth technical PDF for the dashboard — covering architecture, the full code walkthrough, the operator manual, the developer/setup guide, and the future roadmap — is available at:
+A complete, in-depth technical PDF covering the dashboard's architecture, code walkthrough, operator manual, developer/setup guide, and roadmap is available at:
 
 📄 **[`dashboard/docs/`](dashboard/docs/)**
 
-Refer to this document for anything beyond the quick overview in this README, especially the full operator manual and the model-selection rationale.
+Refer to this document for a full narrative walkthrough of the dashboard beyond what is summarized in this README.
 
-## Test the Dashboard
+## Downloads — Installers (Windows & macOS)
 
-If you don't have the physical rig on hand, you can still evaluate the dashboard's real-time detection pipeline using a pre-recorded test video:
-
-🎬 **Test video:** [test1.mp4](https://github.com/abbas-pt/ExpoChallenge_AbbasLotfi/releases/download/dashboard_v1.2/test1.mp4)
-
-Download the file, launch the dashboard, switch the **Input Source** to **Video File**, and upload it to see live detection, tracking, kinematics, and KPI calculation in action — no camera or Arduino required.
-
-## Download & Install (Windows / macOS)
-
-Pre-built, ready-to-run installers for the dashboard are published under the repository's **[GitHub Releases](https://github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood/releases)** page — no Python environment required.
+Pre-built, ready-to-run desktop installers for the dashboard are published on the **[GitHub Releases](https://github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood/releases)** page of this repository. No Python environment or source setup is required to use these:
 
 | Platform | Package | Notes |
 |---|---|---|
-| 🪟 **Windows** | Standalone `.exe` installer | Double-click setup, works on any modern 64-bit Windows machine |
-| 🍎 **macOS (Apple Silicon)** | Native `.dmg` build | For M-series Macs (M1/M2/M3/…) |
-| 🍎 **macOS (Intel)** | Native `.dmg` build | For Intel-based Macs |
+| 🪟 **Windows** | Standalone installer | Single installer for all supported Windows machines |
+| 🍎 **macOS (Apple Silicon)** | Native installer | For M-series Macs (arm64) |
+| 🍎 **macOS (Intel)** | Native installer | For Intel-based Macs (x86_64) |
 
-> Make sure to download the **matching macOS build for your chip** (Apple Silicon vs. Intel) — the two are packaged separately for native performance.
+> Make sure to download the correct macOS build for your Mac's chip (Apple Silicon vs. Intel) — the two are not interchangeable.
+
+## Test the Dashboard (Sample Video)
+
+Don't have a physical conveyor rig or webcam handy? You can evaluate the dashboard's detection, tracking, and kinematics pipeline using a pre-recorded sample video:
+
+▶️ **[Download the test video](https://github.com/abbas-pt/ExpoChallenge_AbbasLotfi/releases/download/dashboard_v1.2/test1.mp4)**
+
+Launch the dashboard, switch the input source to **Video File**, and upload this clip to see the full detection → tracking → kinematics → (simulated) robot-command pipeline in action, even without any Arduino connected.
 
 ## Running the Dashboard from Source
 
-Prefer to run from source instead of the installer? The dashboard is a separate application from Part A, with its own (heavier) dependencies: torch, ultralytics, OpenCV GUI build, Gradio, PyWebview.
+The dashboard is a separate application with its own dependencies (heavier: torch, ultralytics, OpenCV GUI build, Gradio, PyWebview) and its own virtual environment, independent from Part 1. Make sure you've [cloned the repository](#-clone-the-repository) first.
 
 ### Prerequisites
-- Python 3.11+
+- Python 3.11+ (< 3.13)
 - Git
 - Arduino with USB connection (optional — the dashboard falls back to offline mode automatically)
 
-### Windows
+### 1. Virtual environment
 
+**On Windows:**
 ```bash
-# 1. Clone the repository
-git clone https://github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood.git
-cd smart-waste-robot
-
-# 2. Create and activate a virtual environment
 python -m venv dashboard\.venv
 dashboard\.venv\Scripts\activate
-
-# 3. Install dependencies
-pip install -r dashboard\src\requirements.txt
-
-# 4. Run
-python dashboard\src\app.py
 ```
 
-### macOS (Intel & Apple Silicon)
-
+**On macOS (Intel or Apple Silicon):**
 ```bash
-# 1. Clone the repository
-git clone https://github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood.git
-cd smart-waste-robot
-
-# 2. Create and activate a virtual environment
 python3 -m venv dashboard/.venv
 source dashboard/.venv/bin/activate
-
-# 3. Install dependencies
-pip install -r dashboard/src/requirements.txt
-
-# 4. Run
-python3 dashboard/src/app.py
 ```
 
-> On Apple Silicon Macs, make sure you're using a native `arm64` Python build (not running under Rosetta) for the best inference performance. If a dependency doesn't ship an `arm64` wheel, running under Rosetta (`arch -x86_64 python3 -m venv ...`) is a valid fallback.
+### 2. Install dependencies
+```bash
+pip install -r dashboard/requirements.txt
+```
 
-### Before your first run (both platforms)
+### 3. Model weights
 
-1. **Model weights:** place your trained detection weights where `dashboard/app.py` expects them (see `MODEL_PATH` near the top of the file), and confirm `dashboard/data.yaml` points at your dataset if you plan to run the in-app benchmark tool.
-2. **Calibrate:** edit `dashboard/config.yaml` to match your physical rig (serial port, trigger line, belt speed, gripper forces, bin capacities) — the shipped values are benchtop test defaults, not production calibration. On macOS/Linux, serial ports typically look like `/dev/tty.usbmodemXXXX` rather than `COM3`.
-3. **Launch:** this opens a native desktop window (via PyWebview) hosting the Gradio UI. If no Arduino is detected on startup, the dashboard continues in offline mode — reconnect later from the UI's **"Reconnect Hardware"** button, or just use the [test video](#test-the-dashboard) above to try it out immediately.
+Place your trained detection weights where `dashboard/app.py` expects them (see `MODEL_PATH` near the top of the file), and confirm `dashboard/data.yaml` points at your dataset if you plan to run the in-app benchmark tool.
+
+### 4. Calibrate
+
+Edit `dashboard/config.yaml` to match your physical rig (serial port, trigger line, belt speed, gripper forces, bin capacities) — the shipped values are benchtop test defaults, not production calibration. Note that the default serial port format differs by OS:
+- **Windows:** typically `COM3`, `COM4`, etc.
+- **macOS:** typically `/dev/tty.usbmodemXXXX` or `/dev/tty.usbserial-XXXX`.
+
+The dashboard auto-discovers the correct port on startup even if the configured default doesn't match, but setting the right value avoids the initial failed-connection delay.
+
+### 5. Run
+
+**On Windows:**
+```bash
+python dashboard\app.py
+```
+
+**On macOS:**
+```bash
+python3 dashboard/app.py
+```
+
+This launches a native desktop window (via PyWebview) hosting the Gradio UI. If no Arduino is detected on startup, the dashboard continues in offline mode — reconnect later from the UI's "Reconnect Hardware" button, or use the [sample test video](#test-the-dashboard-sample-video) above to evaluate the pipeline without any hardware at all.
+
+> Prefer not to build from source? Use the prebuilt [Windows/macOS installers](#downloads--installers-windows--macos) instead.
+
+---
+
+## 🧬 18-to-5 Operational Class Mapping
+
+This taxonomy is shared by both Part 1 (classification labels) and Part 2 (detection + routing priority):
+
+| TACO Classes (18) | Operational Category | Priority (Dashboard only) | Gripper Force (Dashboard only) |
+|:------------------|:---------------------|:---------------------------|:--------------------------------|
+| Aluminium foil, Can, Pop tab | **Metal** | 1 (Highest) | 70 N |
+| Bottle cap, Bottle, Lid, Other plastic, Plastic bag, Plastic container, Straw | **Plastic** | 2 | 50 N |
+| Broken glass | **Glass** | 3 | 20 N |
+| Carton, Cup, Paper | **Paper** | 4 | 85 N |
+| Cigarette, Other litter, Styrofoam piece, Unlabeled litter | **Waste** | 5 (Lowest) | 60 N |
+
+**Rationale:** the dashboard's priority queue resolves conflicts when multiple items cross the trigger line simultaneously (*Metal > Plastic > Glass > Paper > Waste*). This priority order applies to the dashboard (Part 2) only — the backend API (Part 1) returns a single classification with no queueing logic.
 
 ---
 
 ## 🧪 Testing & CI
+
+*(Applies to Part 1 — the Backend API. The dashboard is validated via its built-in benchmark tool, see [Dashboard Features](#dashboard-features).)*
 
 ```bash
 pip install -r backend/requirements-dev.txt
@@ -456,17 +484,17 @@ bandit -r backend/
 pytest backend/tests/ -q
 ```
 
+Shared linting/testing configuration lives in the root [`pyproject.toml`](pyproject.toml) (pytest paths, ruff rules, mypy settings).
+
 GitHub Actions (`.github/workflows/ci.yml`) runs on every push/PR against `main`:
 - **Test job:** installs dev dependencies and runs `pytest` with `REQUIRE_MODEL=0` so the suite doesn't depend on committed weights.
 - **Lint job:** `ruff` (fatal-error rules block the build; full rule set runs advisory), `mypy`, and `bandit` for static analysis and security scanning.
 
-*(This CI pipeline covers Part A — the backend. The dashboard is validated via its in-app benchmark tool, described in the [full PDF documentation](#full-documentation-pdf).)*
-
 ---
 
-## 🌱 Documentation Index
+## 🌱 Documentation Index (Chat Knowledge Base)
 
-All documents live under [`backend/docs/kb/`](backend/docs/kb/) and are what the local documentation assistant (`/chat`, Part A) searches over.
+All documents live under [`backend/docs/kb/`](backend/docs/kb/) and are what Part 1's local documentation assistant (`/chat`) searches over.
 
 ### 🧩 Core Architecture
 
@@ -500,7 +528,7 @@ All documents live under [`backend/docs/kb/`](backend/docs/kb/) and are what the
 | 08 | [**Failure Modes**](backend/docs/kb/08-failure-modes.md) | Known issues & recovery strategies |
 | 09 | [**Security & Keys**](backend/docs/kb/09-security-and-keys.md) | Auth workflow, API-key handling |
 
-> 📄 For the **dashboard** (Part B), see the standalone PDF under [`dashboard/docs/`](dashboard/docs/) instead — it is not part of the `/chat` knowledge base.
+> For the dashboard's own documentation, see the [PDF in `dashboard/docs/`](#full-documentation-pdf) instead — the dashboard is not indexed by the `/chat` assistant.
 
 ---
 
@@ -527,9 +555,10 @@ For inquiries, collaboration, or feedback regarding **Trace Sort AI**:
 
 * **Project Lead:** Reza Esmaeili Mood — [esmaeilireza1994@gmail.com](mailto:esmaeilireza1994@gmail.com)
 * **GitHub:** [https://github.com/esmaeilireza](https://github.com/esmaeilireza)
+* **Repository:** [github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood](https://github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood)
 
 ---
 
 ## 📄 License
 
-See [LICENSE](LICENSE) for details.
+See [LICENSE](LICENSE) for details (MIT).
