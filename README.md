@@ -472,7 +472,7 @@ This launches a native desktop window (via PyWebview) hosting the Gradio UI. If 
 
 ## 🧬 Operational Class Mapping (Dashboard)
 
-This 18-to-5 mapping applies to **Part 2 (the dashboard)** only — it is how the TACO-trained detection model's 18 raw classes get collapsed into the 5 operational categories used for routing, priority, and gripper force. Part 1's TrashNet-based classifier already outputs one of six categories directly (cardboard, glass, metal, paper, plastic, trash) and has no downstream robot, so no priority/force mapping applies to it.
+This 18-to-5 mapping applies to **Part 2 (the dashboard)** only — it is how the TACO-trained detection model's 18 raw classes get collapsed into the 5 operational categories used for routing, priority, and gripper force. Part 1's TrashNet-based classifier already outputs one of five categories directly (glass, metal, paper, plastic, waste) and has no downstream robot, so no priority/force mapping applies to it.
 
 | TACO Classes (18) | Operational Category | Priority | Gripper Force |
 |:------------------|:---------------------|:---------|:--------------|
