@@ -395,7 +395,7 @@ Refer to this document for a full narrative walkthrough of the dashboard beyond 
 
 ## Downloads — Installers (Windows & macOS)
 
-Pre-built, ready-to-run desktop installers for the dashboard are published on the **[GitHub Releases](https://github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood/releases)** page of this repository. No Python environment or source setup is required to use these:
+Pre-built, ready-to-run desktop installers for the dashboard are published on the **[GitHub Releases](https://github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood/releases/tag/Dashboard)** page of this repository. No Python environment or source setup is required to use these:
 
 | Platform | Package | Notes |
 |---|---|---|
