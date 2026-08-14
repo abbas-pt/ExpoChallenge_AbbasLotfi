@@ -105,7 +105,7 @@ Frame Input → Letterbox (640×640) → YOLO11n Detection (trained on TACO) →
 
 **Part 1 — Backend API pipeline (`backend/inference.py`) — single-shot classification:**
 ```text
-Uploaded Image / Video (from TraceSort or any client) → YOLO11n Classification Model (trained on TrashNet)
+Uploaded Image / Video (from TraceSort or any client) → YOLO8n Classification Model (trained on TrashNet)
 → Top-1 Category + Confidence → JSON API Response
 ```
 
