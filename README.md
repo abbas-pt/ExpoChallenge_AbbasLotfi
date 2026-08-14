@@ -579,6 +579,8 @@ For inquiries, collaboration, or feedback regarding **Trace Sort AI**:
   📧 [aratajaddini@gmail.com](mailto:aratajaddini@gmail.com) · 🔗 [github.com/aratajaddini](https://github.com/aratajaddini)
 
 * **Support:** Sina Niknejad
+  📧 [sinaniknejadi@gmail.com](mailto:sinaniknejadi@gmail.com) · 🔗 [github.com/aratajaddini](https://github.com/aratajaddini)
+  
 
 ---
 
