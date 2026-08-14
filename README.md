@@ -418,8 +418,7 @@ Launch the dashboard, switch the input source to **Video File**, and upload this
 The dashboard is a separate application with its own dependencies (heavier: torch, ultralytics, OpenCV GUI build, Gradio, PyWebview) and its own virtual environment, independent from Part 1. Make sure you've [cloned the repository](#-clone-the-repository) first.
 
 ### Prerequisites
-- Python 3.11+ (< 3.13)
-- Git
+- Python 3.10+ (< 3.13)
 - Arduino with USB connection (optional — the dashboard falls back to offline mode automatically)
 
 ### 1. Virtual environment
