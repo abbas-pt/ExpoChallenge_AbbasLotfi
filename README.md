@@ -11,7 +11,7 @@
 
 Developed for the **Innoverse Competition** by Reza Esmaeili Mood (Lead), Abbas Lotfi (AI Training), Ara Tajaddini (Documentation), and Sina Niknejad (Support).
 
-**Repository:** [github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood](https://github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood)
+**Repository:** [github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood](https://github.com/aratajaddini/ExpoChallenge-AraTajaddini)
 
 ---
 
@@ -395,7 +395,7 @@ Refer to this document for a full narrative walkthrough of the dashboard beyond 
 
 ## Downloads — Installers (Windows & macOS)
 
-Pre-built, ready-to-run desktop installers for the dashboard are published on the **[GitHub Releases](https://github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood/releases/tag/Dashboard)** page of this repository. No Python environment or source setup is required to use these:
+Pre-built, ready-to-run desktop installers for the dashboard are published on the **[GitHub Releases](https://github.com/aratajaddini/ExpoChallenge-AraTajaddini/releases/tag/Dashboard)** page of this repository. No Python environment or source setup is required to use these:
 
 | Platform | Package | Notes |
 |---|---|---|
@@ -567,7 +567,11 @@ All documents live under [`backend/docs/kb/`](backend/docs/kb/) and are what Par
 
 For inquiries, collaboration, or feedback regarding **Trace Sort AI**:
 
-* **Project Lead:** Reza Esmaeili Mood — [esmaeilireza1994@gmail.com](mailto:esmaeilireza1994@gmail.com)
+* **Project Lead/Front&Backend Devloper:** Reza Esmaeili Mood — [esmaeilireza1994@gmail.com](mailto:esmaeilireza1994@gmail.com)
+* **GitHub:** [https://github.com/esmaeilireza](https://github.com/esmaeilireza)
+* **Repository:** [github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood](https://github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood)
+---
+*  **AI Training/Dashboard Devloper:** Reza Esmaeili Mood — [abbasproptrader@gmail.com](mailto:abbasproptrader@gmail.com)
 * **GitHub:** [https://github.com/esmaeilireza](https://github.com/esmaeilireza)
 * **Repository:** [github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood](https://github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood)
 
