@@ -409,7 +409,7 @@ Pre-built, ready-to-run desktop installers for the dashboard are published on th
 
 Don't have a physical conveyor rig or webcam handy? You can evaluate the dashboard's detection, tracking, and kinematics pipeline using a pre-recorded sample video:
 
-▶️ **[Download the test video](https://github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood/releases/download/dashboard_v1.2/test1.mp4)**
+▶️ **[Download the test video](https://github.com/abbas-pt/ExpoChallenge_AbbasLotfi/releases/download/dashboard_v1.2/test1.mp4)**
 
 Launch the dashboard, switch the input source to **Video File**, and upload this clip to see the full detection → tracking → kinematics → (simulated) robot-command pipeline in action, even without any Arduino connected.
 
