@@ -437,7 +437,7 @@ source dashboard/.venv/bin/activate
 
 ### 2. Install dependencies
 ```bash
-pip install -r dashboard/requirements.txt
+pip install -r dashboard/src/requirements.txt
 ```
 
 ### 3. Model weights
