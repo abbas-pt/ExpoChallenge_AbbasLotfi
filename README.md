@@ -60,9 +60,9 @@ Technically, however, **Part 1 and Part 2 run as two separate applications with 
 
 **Core capabilities at a glance:**
 
-- **AI Vision (Web Platform):** A YOLO11n classification model, trained on the **[TrashNet dataset](https://huggingface.co/datasets/garythung/trashnet)**, returns the top waste category for a single uploaded image or video via the `/predict` endpoint.
+- **AI Vision (Web Platform):** A YOLO8n classification model, trained on the **[TrashNet dataset](https://huggingface.co/datasets/garythung/trashnet)**, returns the top waste category for a single uploaded image or video via the `/predict` endpoint.
 - **AI Vision (Dashboard):** A custom YOLO11n detection model, trained on the **[TACO dataset](https://www.kaggle.com/datasets/vencerlanz09/taco-dataset-yolo-format)**, detects and tracks waste items live on a conveyor belt across 18 fine-grained classes, mapped to 5 operational categories for routing.
-- **Hardware Bridge (Dashboard only):** A JSON-based serial protocol drives an Arduino-controlled robotic arm, complete with 2D kinematics (position, angle, time-to-grab) computed per detected object.
+- **Hardware Bridge (Dashboard only):** A JSON-based serial protocol drives an Arduino-controlled robotic arm, complete with 3D kinematics (position, angle, time-to-grab) computed per detected object.
 - **Local Documentation Assistant (Web Platform only):** A retrieval-based (hybrid BM25 + sentence-embedding) search over the project's technical knowledge base, returning cited, extractive answers via the `/chat` endpoint.
 - **OEE Monitoring (Dashboard only):** Real-time industrial KPIs (Availability × Performance × Quality) surfaced live on the dashboard.
 - **Web Client:** A polished landing page and interactive demo (TraceSort) that authenticates against the API and drives `/predict` and `/chat` directly from the browser.
