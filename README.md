@@ -569,11 +569,11 @@ For inquiries, collaboration, or feedback regarding **Trace Sort AI**:
 
 * **Project Lead/Front&Backend Devloper:** Reza Esmaeili Mood — [esmaeilireza1994@gmail.com](mailto:esmaeilireza1994@gmail.com)
 * **GitHub:** [https://github.com/esmaeilireza](https://github.com/esmaeilireza)
-* **Repository:** [github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood](https://github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood)
+* **Repository:** [https://github.com/aratajaddini/ExpoChallenge-AraTajaddini](https://github.com/aratajaddini/ExpoChallenge-AraTajaddini)
 
 *  **AI Training/Dashboard Devloper:** Abbas Lotfi — [abbasproptrader@gmail.com](mailto:abbasproptrader@gmail.com)
 * **GitHub:** [https://github.com/abbas-pt](https://github.com/abbas-pt)
-* **Repository:** [github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood](https://github.com/aratajaddini/ExpoChallenge-RezaEsmaeiliMood)
+* **Repository:** [https://github.com/aratajaddini/ExpoChallenge-AraTajaddini](https://github.com/aratajaddini/ExpoChallenge-AraTajaddini)
 
 ---
 
