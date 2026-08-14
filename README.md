@@ -1,4 +1,4 @@
-<img width="20" height="20" alt="favicon-180" src="https://github.com/user-attachments/assets/475eb7fb-2049-4bf3-9726-f51679b45393" />#  Trace Sort AI — Smart Waste Sorting Platform
+<img width="40" height="40" alt="favicon-180" src="https://github.com/user-attachments/assets/475eb7fb-2049-4bf3-9726-f51679b45393" /> Trace Sort AI — Smart Waste Sorting Platform
 
 [![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
 [![YOLO](https://img.shields.io/badge/AI_Model-YOLO11n-green.svg)](https://github.com/ultralytics/ultralytics)
