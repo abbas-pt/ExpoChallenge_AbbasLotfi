@@ -169,7 +169,7 @@ This part is the public-facing side of Trace Sort AI: a stateless classification
 
 ## AI Classification Model
 
-- **Base model:** YOLO11n, adapted as a classification head.
+- **Base model:** YOLO8n, adapted as a classification head.
 - **Dataset:** **[TrashNet](https://huggingface.co/datasets/garythung/trashnet)** — a labeled image dataset covering six household waste categories (cardboard, glass, metal, paper, plastic, trash).
 - **Job:** a *classification* model — it returns a single top-class label and confidence score for an uploaded image or video, with **no bounding boxes, tracking, or queueing logic**.
 - **Weights:** committed to the repository under [`backend/weights/`](backend/weights/) — the API and the live demo work out of the box, no external download required.
